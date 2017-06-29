@@ -1,0 +1,334 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace GUITTT
+{
+    public partial class TicTacToe : Form
+    {
+        public TicTacToe()
+        {
+            InitializeComponent();
+            
+
+        }
+
+        string player = "x";
+        int player1Wins = 0;
+        int player2Wins = 0;
+        bool AI = false;
+        
+        int draw = 0;
+
+        public string numOfWins(){
+
+            return "\tPlayer 1 Wins: " + player1Wins + "\tPlayer 2 Wins: " + player2Wins
+                +"\n\n\tDraw: " + draw + "\tNumber of Wins: " + (player1Wins+player2Wins);
+        }
+
+        public string DisplayInstructions()
+        {
+            string st = "This is a Two-Player Tic Tac Toe game.";
+            st += "The object of Tic Tac Toe is to get three in a row. You play on a three by three game board."; 
+            st += "The first player is known as X and the second is O.";
+            st += " Players alternate placing Xs and Os on the game board until either oppent has three in a row or all nine squares are filled.";
+            st += " X always goes first, and in the event that no one has three in a row, the stalemate is called a cat game";
+            st += "\n\n\tPlayer 1 = X\tPlayer 2 = O";
+            st += "\n\nPress OK to start the game";
+            return st;
+        }
+        
+       
+
+
+        public void changePlayer()
+        {
+            if (player == "x")
+                player = "o";
+            else
+                player = "x";
+        }
+        public bool checkWin()
+        {
+            return (((button1.Text == player) && (button2.Text == player) && (button3.Text == player)) ||
+                    ((button4.Text == player) && (button5.Text == player) && (button6.Text == player)) ||
+                    ((button7.Text == player) && (button8.Text == player) && (button9.Text == player)) ||
+                    ((button1.Text == player) && (button4.Text == player) && (button7.Text == player)) ||
+                    ((button2.Text == player) && (button5.Text == player) && (button8.Text == player)) ||
+                    ((button3.Text == player) && (button6.Text == player) && (button9.Text == player)) ||
+                    ((button1.Text == player) && (button5.Text == player) && (button9.Text == player)) ||
+                    ((button3.Text == player) && (button5.Text == player) && (button7.Text == player)));
+           
+        }
+        public void changeColor()
+        {
+            if ((button1.Text == player) && (button2.Text == player) && (button3.Text == player))
+            { button1.BackColor = button2.BackColor = button3.BackColor = Color.LightGreen; }
+            else if ((button4.Text == player) && (button5.Text == player) && (button6.Text == player))
+            { button4.BackColor = button5.BackColor = button6.BackColor = Color.LightGreen; }
+            else if ((button7.Text == player) && (button8.Text == player) && (button9.Text == player))
+            { button7.BackColor = button8.BackColor = button9.BackColor = Color.LightGreen; }
+            else if ((button1.Text == player) && (button4.Text == player) && (button7.Text == player))
+            { button1.BackColor = button4.BackColor = button7.BackColor = Color.LightGreen; }
+            else if ((button2.Text == player) && (button5.Text == player) && (button8.Text == player))
+            { button2.BackColor = button5.BackColor = button8.BackColor = Color.LightGreen; }
+            else if ((button3.Text == player) && (button6.Text == player) && (button9.Text == player))
+            { button3.BackColor = button6.BackColor = button9.BackColor = Color.LightGreen; }
+            else if ((button1.Text == player) && (button5.Text == player) && (button9.Text == player))
+            { button1.BackColor = button5.BackColor = button9.BackColor = Color.LightGreen; }
+            else
+            { button3.BackColor = button5.BackColor = button7.BackColor = Color.LightGreen; }
+        }
+
+        public Button[] btnArray()
+        {
+            Button[] a = { button1, button2, button3, button4, button5, button6, button7, button8, button9 };
+            return a;
+        }
+        public void changeColorIfDraw()
+        {
+            Button[] a = btnArray();
+            foreach (Button i in a)
+                i.BackColor = Color.LightSalmon;
+        }
+        public bool isFull()
+        {
+            Button[] a = btnArray();
+            for (int i = 0; i<a.Length; i++)
+            {
+                if (a[i].Text == "")
+                    return false;
+            }
+            return true;
+        }
+        public void isWinner()
+        {
+            if (checkWin())
+            {
+                changeColor();
+                
+                    if (player == "x")
+                    {
+
+                        MessageBox.Show("Player 1 Wins!");
+                        player1Wins++;
+                    }
+                    else
+                    {
+                        MessageBox.Show("Player 2 Wins!");
+                        player2Wins++;
+                    }
+                
+                reset();
+                player = "x";
+                return;
+            }
+            if (isFull())
+            {
+                draw++;
+                changeColorIfDraw();
+                MessageBox.Show("Draw");
+                reset();
+                player = "x";
+                return;
+            }
+            
+            
+            if (AI==true)
+            {
+                changePlayer();
+                Computer();
+                if (checkWin())
+                {
+                    changeColor();
+                    if (player == "x")
+                    {
+                        MessageBox.Show("Player 1 Wins!");
+                        player1Wins++;
+                    }
+                    else
+                    {
+                        MessageBox.Show("Player 2 Wins!");
+                        player2Wins++;
+                    }
+                    reset();
+                    player = "x";
+                    return;
+                }
+            }
+            changePlayer();
+
+        }
+
+        public void Computer()
+        {
+            Button[] b = btnArray();
+            Random random = new Random();
+            
+            while (true){
+                int i = random.Next(8);
+                if (b[i].Text == "")
+                {
+                    
+                    b[i].Text = player;
+                    b[i].BackColor = Color.LightYellow;
+                    break;
+                }
+                
+            }
+        }
+
+        public void reset()
+        {
+            Button[] a = btnArray();
+            foreach (Button i in a)
+            {
+                i.Text = "";
+                i.BackColor = Color.LightGray;
+            }
+        }
+
+       
+        private void button1_Click(object sender, EventArgs e)
+        {
+            if (button1.Text == "")
+            {
+                button1.Text = player;
+                button1.BackColor = Color.LightYellow;
+                isWinner();
+            }
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            if (button2.Text == "")
+            {
+                button2.Text = player;
+                button2.BackColor = Color.LightYellow;
+                isWinner();
+            }
+            
+
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            if (button3.Text == "")
+            {
+                button3.Text = player;
+                button3.BackColor = Color.LightYellow;
+
+                isWinner();
+            }
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            if (button4.Text == "")
+            {
+                button4.Text = player;
+                button4.BackColor = Color.LightYellow;
+                isWinner();
+            }
+        }
+
+       
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            if (button5.Text == "")
+            {
+                button5.Text = player;
+                button5.BackColor = Color.LightYellow;
+                isWinner();
+            }
+        }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+            if (button6.Text == "")
+            {
+                button6.Text = player;
+                button6.BackColor = Color.LightYellow;
+                isWinner();
+            }
+
+        }
+        private void button7_Click(object sender, EventArgs e)
+        {
+            if (button7.Text == "")
+            {
+                button7.Text = player;
+                button7.BackColor = Color.LightYellow;
+                isWinner();
+            }
+
+        }
+        private void button8_Click(object sender, EventArgs e)
+        {
+            if (button8.Text == "")
+            {
+                button8.Text = player;
+                button8.BackColor = Color.LightYellow;
+                isWinner();
+            }
+
+        }
+
+        private void button9_Click(object sender, EventArgs e)
+        {
+            if (button9.Text == "")
+            {
+                button9.Text = player;
+                button9.BackColor = Color.LightYellow;
+                isWinner();
+            }
+
+        }
+
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
+            
+        }
+
+        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show(DisplayInstructions(), "Instructions");
+        }
+
+        private void numberOfWinsToolStripMenuItem_Click_1(object sender, EventArgs e)
+        {
+            MessageBox.Show(numOfWins(), "Number Of Wins");
+        }
+
+        
+
+        private void TicTacToe_Load(object sender, EventArgs e)
+        {
+           
+            
+        }
+
+        private void playerToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            AI = false;
+        }
+
+        private void aIToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            AI = true;
+        }
+
+        private void restartToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            reset();
+        }
+    }
+}
